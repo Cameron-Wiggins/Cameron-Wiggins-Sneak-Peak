@@ -29,10 +29,12 @@ function App() {
           Count is {count}
         </button>
         // Before section but after button
-    <HStack>
-      <Button>Click me</Button>
-      <Button>Click me</Button>
-    </HStack>
+          <HStack>
+            <Button>Click me</Button>
+            <Button>Click me</Button>
+          </HStack>
+          )
+        }
       </section>
 
       <div className="ticks"></div>
