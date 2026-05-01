@@ -27,6 +27,7 @@ const tweets = [
     likes: 31,
     replies: 8,
     tag: "Cyber 301",
+    
   },
 ];
 
