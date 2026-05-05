@@ -10,15 +10,28 @@ import {
   Avatar,
   Badge,
 } from "@chakra-ui/react";
-import tweetsData from "./data/tweets.json";
 import type { Tweet } from "./types/tweet";
-import {useState} from "react"
+import { useState, useEffect } from "react";
+import { supabase } from "./utils/supabase";
 
 function App() {
   // Tweets is the current list of tweets shown
   // setTweets is how React updates whats shown
-  // We start with tweets from our json file
-  const [tweets, setTweets] = useState<Tweet[]>(tweetsData as Tweet[])
+  // We start with no tweets
+  const [tweets, setTweets] = useState<Tweet[]>([]);
+  useEffect(() => {
+    async function load() {
+      const { data, error } = await supabase
+        .from("tweets")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) console.error(error);
+      else setTweets(data || []);
+    }
+
+    load();
+  }, []);
 
   // Input is what is currently typed in the box
   // setInput is how React knows about the newly typed data
@@ -36,14 +49,13 @@ function App() {
       text: input.trim(),
       likes: 0,
       replies: 0,
-      tag: ""
-    }
+      tag: "",
+    };
     // Put new tweet first
-    setTweets([newTweet, ...tweets]); 
+    setTweets([newTweet, ...tweets]);
     // Clear input box for new tweet
-    setInput("")
-  }
-
+    setInput("");
+  };
 
   // Save the current time once during this render.
   const currentTime = new Date().toISOString();
@@ -68,7 +80,7 @@ function App() {
         <VStack gap={5} align="stretch">
           <Box bg="gray.800" p={6} borderRadius="2xl" boxShadow="md">
             <Heading size="lg" color="white">
-               Sneak-Peak 👀👀👀
+              Sneak-Peak 👀👀👀
             </Heading>
             <Text color="gray.400" mt={2}>
               A simple Twitter clone built with Vite and Chakra UI.
@@ -85,11 +97,13 @@ function App() {
                 bg="gray.700"
                 borderColor="gray.600"
                 color="white"
-                value = {input}
+                value={input}
                 // Everytime user types, we update
-                onChange = {(userInput) => setInput(userInput.target.value)}
+                onChange={(userInput) => setInput(userInput.target.value)}
               />
-              <Button colorScheme="twitter" alignSelf="flex-end"
+              <Button
+                colorScheme="twitter"
+                alignSelf="flex-end"
                 // When the button is cliked, run handle yap
                 onClick={handleYapClick}
               >
